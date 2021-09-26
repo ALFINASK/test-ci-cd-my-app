@@ -1,0 +1,39 @@
+# label workflow
+name: Linter
+
+# kapan workflow dijalankan
+on:
+  push:
+    branches:
+      - master
+      - staging
+      - development
+      - uat
+
+# step by step
+jobs:
+  run-linters:
+    name: run-linters
+    runs-on: ${{ matrix.os }}
+
+    startegy:
+      # fungsi matrix untuk siapa tau butuh beberapa env
+      matrix:
+        os: [ubuntu-latest] # sesuaikan namanya apa windows/macos
+        node: [13.x, 14.x, 15.x]
+
+    steps:
+      - name: Checkout git repository
+        # uses untuk ngelakuin apa di step ini | actions/.. buat mindahin branchnya
+        uses: actions/checkout@v2
+
+      - node: Setup node env
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - node: install dependencies
+        uses: npm install
+
+      - node: run linter
+        uses: npm run lint
